@@ -1,3 +1,20 @@
+global
+  log /dev/log local0
+  log /dev/log local1 notice
+  maxconn 4096
+  tune.ssl.default-dh-param 2048
+  stats socket /var/run/haproxy/socket expose-fd listeners
+  server-state-file global
+  server-state-base /var/state/haproxy/
 defaults
+  log global
+  retries 3
+  maxconn 3000
+  timeout connect 5s
   timeout client 60s
   timeout server 60s
+  option redispatch
+listen stats
+  bind 0.0.0.0:9090
+  balance mode http
+  stats enable monitor-uri /_haproxy_health_check
